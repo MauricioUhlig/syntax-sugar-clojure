@@ -29,12 +29,5 @@
     :else
     (into [] (concat `[;; Comparador do bit menos significativo
                        (set! ~(symbol "temp1") (~(symbol "not") ~(list :in (- (* n 2) 1))))
-                       (set! ~(symbol "temp2") (~(symbol "and") ~(list :in (- n 1)) ~(symbol "temp1")))
-                       ;; Comparador do segundo bit menos significativo
-                       (set! ~(symbol "temp3") (~(symbol "not") ~(list :in (- (* n 2) 2))))
-                       (set! ~(symbol "temp4") (~(symbol "and") ~(list :in (- n 2)) ~(symbol "temp3")))
-                       ;; Comparando as comparações dos dois bits anteriores
-                       (set! ~(symbol "temp5") (~(symbol "or") ~(list :in (- n 2)) ~(symbol "temp3")))
-                       (set! ~(symbol "temp6") (~(symbol "and") ~(symbol "temp2") ~(symbol "temp5")))
-                       (set! ~(symbol "temp7") (~(symbol "or") ~(symbol "temp6") ~(symbol "temp4")))]
+                       (set! ~(symbol "temp2") (~(symbol "and") ~(list :in (- n 1)) ~(symbol "temp1")))]
                      (cmp-n-bits-helper 2 n)))))
