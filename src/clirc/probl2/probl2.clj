@@ -51,7 +51,6 @@
         then-vars (keys (get-in tree-if [:then])) 
         else-vars (keys (get-in tree-if [:else]))
         vars (distinct (concat then-vars else-vars))]
-    (println tree-if vars)
     (into [] (concat (translate-sttmt tree-if :then then-vars)
                      (translate-sttmt tree-if :else else-vars)
                      (translate-if-sttmt tree-if vars)))))
@@ -60,7 +59,6 @@
   [prog]
   (let [count-if 1
         aux (fn [acc sttmt]
-              (let [sttmt_result (expand-if-sttmt sttmt count-if)]
-                (println sttmt_result)
+              (let [sttmt_result (expand-if-sttmt sttmt count-if)] 
                 (into [] (concat acc sttmt_result))))]
        (reduce aux [] prog)))
