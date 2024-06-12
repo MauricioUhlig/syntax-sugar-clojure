@@ -1,0 +1,41 @@
+a0 a1 a2 a3
+b0 b1 b2 b3
+
+# Comparador de 1 bit
+temp1 = not(b3)
+temp2 = and(a3,temp1)
+
+# Comparador de 2 bits
+temp3 = not(b2)
+temp4 = and(a2, temp3)
+# Variação para aceitar mais bits
+temp5 = or(a2, temp3)
+temp6 = and(temp2, temp5)
+tmep7 = or(temp6, temp4)
+
+# Comparador de 3 bits
+temp8 = not(b1)
+temp9 = and(a1, temp8)
+# Variação para aceitar mais bits
+temp10 = or(a1, temp8)
+temp11 = and(temp4, temp10)
+tmep12 = or(temp11, temp9)
+
+
+# Comparador de 4 bits
+temp13 = not(b0)
+temp14 = and(a0, temp13)
+# Variação para aceitar mais bits
+temp15 = or(a0, temp13)
+temp16 = and(temp9, temp15)
+tmep17 = or(temp16, temp14)
+
+
+# Comparador Generico - x é a iteração atual, n é total
+idBase = (x-3)*5 +7
+temp[idBase+1] = not(b[n - x])
+temp[idBase+2] = and(a[n - x], temp[idBase+1])
+# Variação para aceitar mais bits
+temp[idBase+3] = or(a[n - x], temp[idBase+1])
+temp[idBase+4] = and(temp[idBase], temp[idBase+3])
+temp[idBase+5] = or(temp[idBase+4],temp[idBase+2] )
