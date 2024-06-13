@@ -5,10 +5,16 @@
  (set! c (nand (:in 1) (:in 2)))])
 
 
-func: if
 num: 0
 cond: (:in 0)
 then:
+    nested:
+        0: 
+            num: 1
+            cond: (:in 0)
+            then:
+                varA:
+                    var: .....
     a: 
         var: a$then0
         sttmt: (set! a$then0 (and (:in 1) (:int 2))) 
@@ -29,3 +35,64 @@ else:
         var: c$else0 
         sttmt: (set! c$else0 (nand (:in 1) (:in 2)))
 
+(def iif '[(iif (:in 0)
+             [(iif (:in 3) [(set! a (and (:in 1) (:int 2)))] [(set! d (and (:in 1) (:int 2)))])
+              (iif (:in 3) [(set! a (and (:in 1) (:int 2)))] [(set! d (and (:in 1) (:int 2)))])]
+             [(set! a (xor (:in 1) (:int 2)))
+              (set! c (nand (:in 1) (:in 2)))])])
+{
+    :deep 0,
+    :index 0,
+    :cond (:in 0),
+    :num-if 1,
+    :then {
+        :nested {
+            0 {
+                :deep 1,
+                :index 0,
+                :cond (:in 3),
+                :num-if 2,
+                :then {
+                    a {
+                        :var a$then2,
+                        :sttmt (set! a$then2 (and (:in 1) (:int 2)))
+                    }
+                },
+                :else {
+                    d {
+                        :var d$else2,
+                        :sttmt (set! d$else2 (and (:in 1) (:int 2)))
+                    }
+                }
+            },
+            1 {
+                :deep 1,
+                :index 1,
+                :cond (:in 3),
+                :num-if 3,
+                :then {
+                    a {
+                        :var a$then3,
+                        :sttmt (set! a$then3 (and (:in 1) (:int 2)))
+                    }
+                },
+                :else {
+                    d {
+                        :var d$else3,
+                        :sttmt (set! d$else3 (and (:in 1) (:int 2)))
+                    }
+                }
+            }
+        }
+    },
+    :else {
+        a {
+            :var a$else1,
+            :sttmt (set! a$else1 (xor (:in 1) (:int 2)))
+        },
+        c {
+            :var c$else1,
+            :sttmt (set! c$else1 (nand (:in 1) (:in 2)))
+        }
+    }
+}

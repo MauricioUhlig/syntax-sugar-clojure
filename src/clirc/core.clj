@@ -1,7 +1,8 @@
 (ns clirc.core
   (:gen-class)
   (:require [clojure.core.match :refer [match]]
-            [clirc.bool-logic :refer [map->bitvec]]))
+            [clirc.bool-logic :refer [map->bitvec]] 
+            [clirc.probl2.probl2 :as iif]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -162,3 +163,11 @@
     [(x :guard symbol?)] (get env x)
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
+
+(def iif '[(iif (:in 0)
+             [(iif (:in 3) [(set! a (and (:in 1) (:int 2)))] [(set! d (and (:in 1) (:int 2)))])
+              (iif (:in 3) [(set! a (and (:in 1) (:int 2)))] [(set! d (and (:in 1) (:int 2)))])]
+             [(set! a (xor (:in 1) (:int 2)))
+              (set! c (nand (:in 1) (:in 2)))])])
+
+(println (iif/expand-if iif))
