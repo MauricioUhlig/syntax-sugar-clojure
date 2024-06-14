@@ -170,4 +170,5 @@
              [(set! a (xor (:in 1) (:int 2)))
               (set! c (nand (:in 1) (:in 2)))])])
 
-(println (iif/expand-if iif))
+(println "\n"
+         (iif/expand-if iif))

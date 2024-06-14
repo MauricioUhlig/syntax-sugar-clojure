@@ -96,3 +96,9 @@ else:
         }
     }
 }
+(set! not-cond1 (not cond1))
+(set! not-cond2 (not cond2))
+(set! then1-then2 (and cond1 cond2))
+(set! then1-else2 (and cond1 not-cond2))
+(set! a (if (then1-then2) a$then2 a))
+(set! b (if (then1-else2) b$else2 b))
