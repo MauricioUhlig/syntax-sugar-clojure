@@ -1,13 +1,22 @@
 (ns clirc.probl2.probl2
   (:require [clojure.core.match :refer [match]]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; RECURSOS AUXILIARES
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn create-if 
+  [result-var cnd then else]
+  `((set! ~result-var (~(symbol "iff") ~cnd ~(if (nil? then) result-var then) ~(if (nil? else) result-var else)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; COMPOSIÇÃO DA ARVORE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn expand-if-sttmt-arg
   [sttmt count-if option]
   (match [sttmt] 
     [(['set! lhs rhs] :seq)]
     (let [new-name (str lhs "$" option count-if)] 
-      {lhs {:var new-name :sttmt `(set! ~new-name ~rhs)}}
-      )))
+      {lhs {:var new-name :sttmt `(set! ~new-name ~rhs)}})))
 
 (defn expand-if-sttmt-args
   [sttmts count-if option]
@@ -18,23 +27,22 @@
 (defn expand-if-sttmt-tree
   [sttmt count-if]
   (match [sttmt]
-    [(['iif cnd then else] :seq)]
+    [(['if cnd then else] :seq)]
     (let [ex-then (expand-if-sttmt-args then count-if "then")
           ex-else (expand-if-sttmt-args else count-if "else")]
-    {:func 'if,
-     :num count-if,
-     :cond cnd,
-     :then ex-then,
-     :else ex-else})))
+      {:num count-if,
+       :cond cnd,
+       :then ex-then,
+       :else ex-else})))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; TRADUÇÃO DA ARVORE EM CÓDIGO INTERMEDIÁRIO
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn translate-sttmt 
   [tree key vars]
   (letfn [(aux [acc sttmt-var]
                (concat acc [(get-in tree [key sttmt-var :sttmt])]))]
     (reduce aux () vars)))
-(defn create-if 
-  [result-var cnd then else]
-  `((set! ~result-var (if ~cnd ~(if (nil? then) result-var then) ~(if (nil? else) result-var else)))))
 
 (defn translate-if-sttmt 
   [tree vars]
@@ -45,20 +53,24 @@
                  (concat acc (create-if sttmt-var cnd then-var-name else-var-name))))]
     (reduce aux () vars)))
 
-(defn expand-if-sttmt
-  [sttmt count-if]
-  (let [tree-if (expand-if-sttmt-tree sttmt count-if)
-        then-vars (keys (get-in tree-if [:then])) 
-        else-vars (keys (get-in tree-if [:else]))
+(defn translate-if
+  [tree]
+  (let [then-vars (keys (get-in tree [:then])) 
+        else-vars (keys (get-in tree [:else]))
         vars (distinct (concat then-vars else-vars))]
-    (into [] (concat (translate-sttmt tree-if :then then-vars)
-                     (translate-sttmt tree-if :else else-vars)
-                     (translate-if-sttmt tree-if vars)))))
+    (into [] (concat (translate-sttmt tree :then then-vars)
+                     (translate-sttmt tree :else else-vars)
+                     (translate-if-sttmt tree vars)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; EXECUÇÃO
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn expand-if
   [prog]
   (let [count-if 1
         aux (fn [acc sttmt]
-              (let [sttmt_result (expand-if-sttmt sttmt count-if)] 
+              (let [tree (expand-if-sttmt-tree sttmt count-if)
+                    sttmt_result (translate-if tree)]
                 (into [] (concat acc sttmt_result))))]
        (reduce aux [] prog)))
+

@@ -1,31 +1,39 @@
-(if (:in 0)
- [(set! a (and (:in 1) (:int 2)))
- (set! b (or (:in 1) (:in 2)))]
- [(set! a (xor (:in 1) (:int 2)))
- (set! c (nand (:in 1) (:in 2)))])
-
-
-func: if
-num: 0
-cond: (:in 0)
-then:
-    a: 
-        var: a$then0
-        sttmt: (set! a$then0 (and (:in 1) (:int 2))) 
-    b: 
-        var: b$then0
-        sttmt: (set! b$then0 (or (:in 1) (:in 2)))
-    c: nil  
-        var: c
-        sttmt: nil
-else:
-    a:
-        var: a$else0
-        sttmt: (set! a$else0 (xor (:in 1) (:int 2)))
-    b: nil
-        var: b
-        sttmt: nil
-    c:
-        var: c$else0 
-        sttmt: (set! c$else0 (nand (:in 1) (:in 2)))
+Input:
+    (if (:in 0)
+    [(set! a (and (:in 1) (:int 2)))
+    (set! b (or (:in 1) (:in 2)))]
+    [(set! a (xor (:in 1) (:int 2)))
+    (set! c (nand (:in 1) (:in 2)))])
+Output:
+    (set! a$then1 (and (:in 1) (:in 2)))
+    (set! b$then1 (or (:in 1) (:in 2)))
+    (set! a$else1 (xor (:in 1) (:in 2)))
+    (set! c$else1 (nand (:in 1) (:in 2)))
+    (set! a (iff (:in 0) a$then1 a$else1))
+    (set! b (iff (:in 0) b$then1 b))
+    (set! c (iff (:in 0) c c$else1))
+Tree:
+    func: if
+    num: 0
+    cond: (:in 0)
+    then:
+        a: 
+            var: a$then0
+            sttmt: (set! a$then0 (and (:in 1) (:int 2))) 
+        b: 
+            var: b$then0
+            sttmt: (set! b$then0 (or (:in 1) (:in 2)))
+        c: nil  
+            var: c
+            sttmt: nil
+    else:
+        a:
+            var: a$else0
+            sttmt: (set! a$else0 (xor (:in 1) (:int 2)))
+        b: nil
+            var: b
+            sttmt: nil
+        c:
+            var: c$else0 
+            sttmt: (set! c$else0 (nand (:in 1) (:in 2)))
 
