@@ -11,7 +11,7 @@ da esquerda for maior que o da direita, e 0 em qualquer outro caso.
 A parte II pede uma prova que existe uma constante para descobrir o número máximo de portas lógicas para computar a função de maior (mesmas regras 
 discutidas na parte I) no dialeto AON-CLIRC.
 
-Por fim, a parte III requere a mesma prova pedida na parte II, porém para o dialeto NAND-CLIRC.
+Por fim, a parte III requere a mesma prova pedida na parte II, porém para portas NAND.
 
 **Solução - Parte I**
 
@@ -29,6 +29,8 @@ do AON, a constante é 5), o código foi criado de forma a checar o caso inicial
 lógicas para formar uma lista no dialeto AON-CLIRC, a qual é retornada.
 
 
+
+ --- TO DO ---
 **Solução - Parte III**
 
 A solução adotada foi implementar uma recursão. O caso base é quando o
