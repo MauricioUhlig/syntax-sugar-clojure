@@ -104,16 +104,14 @@ Retorno:  lista no formato CLIRC-NAND. E.g.: [(set! temp1 (nand (:in 5) (:in 3))
 "
 (defn cmp-n-bits-nand
   [n]
-  (= n 1)
+  (cond
+    (= n 1)
     '[(set! temp1 (nand (:in 0) (:in 1)))
-      (set! temp2 (nand (:in 0) temp1)) 
+      (set! temp2 (nand (:in 0) temp1))
       (set! (:out 0) (nand temp2 temp2))]
     :else
-    (into [] (concat `[
-                       (set! ~(symbol "temp1") (~(symbol "nand") ~(list :in (- (* n 2) 1)) ~(list :in (- n 1))))
-                       (set! ~(symbol "temp2") (~(symbol "nand") ~(list :in (- n 1)) ~(symbol "temp1")))
-                       (set! ~(symbol "temp3") (~(symbol "nand") ~(list :in ~(symbol "temp2")) ~(symbol "temp2")))
-                       
-                       ]
-                     (cmp-n-bits-helper-nand n)))
-  )
+    (into [] (concat
+              `[(set! ~(symbol "temp1") (~(symbol "nand") ~(list :in (- (* n 2) 1)) ~(list :in (- n 1))))
+                (set! ~(symbol "temp2") (~(symbol "nand") ~(list :in (- n 1)) ~(symbol "temp1")))
+                (set! ~(symbol "temp3") (~(symbol "nand") ~(symbol "temp2") ~(symbol "temp2")))]
+              (cmp-n-bits-helper-nand n)))))
