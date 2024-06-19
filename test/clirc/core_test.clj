@@ -84,8 +84,8 @@
     (set! (:out 1) (one (:in 1)))
     (set! ichi (one (:in 0)))
     (set! rei (zero (:in 0)))
-    (set! (:out 2) (if (:in 2) ichi rei))
-    (set! (:out 3) (if (:in 3) rei ichi))])
+    (set! (:out 2) (iff (:in 2) ichi rei))
+    (set! (:out 3) (iff (:in 3) rei ichi))])
 
 (def basic-nand
   '[(set! (:out 0) (nand (:in 0) (:in 1)))

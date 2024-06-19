@@ -2,7 +2,8 @@
   (:gen-class)
   (:require [clojure.core.match :refer [match]]
             [clirc.bool-logic :refer [map->bitvec]]
-            [clirc.probl2.probl2 :as iff]))
+            [clirc.probl2.probl2 :as iff]
+            [clirc.probl1.probl1 :as cmp]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -164,9 +165,5 @@
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
 
-(def iff '[(if (:in 0)
-            [(set! a (and (:in 1) (:int 2)))
-             (set! b (or (:in 1) (:in 2)))]
-            [(set! a (xor (:in 1) (:int 2)))
-             (set! c (nand (:in 1) (:in 2)))])])
-(println (iff/expand-if iff))
+
+(println (cmp/cmp-n-bits-nand 2))

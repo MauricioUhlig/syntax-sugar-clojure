@@ -40,5 +40,6 @@ Para executar a função no prompt do Clojure execute, por exemplo:
 ```
 #!=> lein repl
 (ns clirc.core (:require [clirc.probl1.probl1 :as cmp]))
-(eval-prog-aon (cmp/cmp-n-bits 3) [0 0 1 0 0 0])
+(eval-prog-aon (cmp/cmp-n-bits-aon 3) [0 0 1 0 0 0])
+(eval-prog-nand (cmp/cmp-n-bits-nand 3) [0 0 1 0 0 0])
 ```
