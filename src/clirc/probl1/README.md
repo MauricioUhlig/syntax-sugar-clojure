@@ -11,7 +11,7 @@ da esquerda for maior que o da direita, e 0 em qualquer outro caso.
 A parte II pede uma prova que existe uma constante para descobrir o número máximo de portas lógicas para computar a função de maior (mesmas regras 
 discutidas na parte I) no dialeto AON-CLIRC.
 
-Por fim, a parte III requere a mesma prova pedida na parte II, porém para o dialeto NAND-CLIRC.
+Por fim, a parte III requere a mesma prova pedida na parte II, porém para portas NAND.
 
 **Solução - Parte I**
 
@@ -25,25 +25,20 @@ como consequência, o mesmo código consegue verificar para números de 3 bits. 
 Para essa solução, o ponto inicial foi desenhar um circuito booleano e adicionar
 as comparações bit a bit para identificar o padrão. Com esse número observado (no caso
 do AON, a constante é 5), o código foi criado de forma a checar o caso inicial 
-(comparação de números de 1 bit) e a partir ele, repetir a estrutura de adicionar 5 portas
-lógicas para formar uma lista no dialeto AON-CLIRC, a qual é retornada.
-
+(comparação de números de 1 bit) e a partir ele, repetir a estrutura de adicionar as 5 portas
+lógicas necessárias para formar a lista no dialeto AON-CLIRC, a qual é retornada e pode ser
+avaliada.
 
 **Solução - Parte III**
 
-A solução adotada foi implementar uma recursão. O caso base é quando o
-comprimento é zero. A única cadeia de tamanho zero é a cadeia vazia. Nos demais
-casos, gera-se todas as cadeias de tamanho $n-1$ e em seguida gera-se duas
-semi-duplicadas, uma com 0 acrescentando à frente de cada cadeia, e outra com 1
-acrescentado à frente de cada cadeia. O resultado é a concatenação das duas
-semi-duplicatas.
+Esta solução seguiu as mesmas linhas da Solução II, com a diferença da porta lógica utilizada.
+Ao avaliar o circuito necessário para realizar a comparação entre n bits, a quantidade de portas
+constante a sere adicionada para cada bit adicional foi 6.
 
 **Execução**
 Para executar a função no prompt do Clojure execute, por exemplo:
 ```
-#> lein repl
+#!=> lein repl
 (ns clirc.core (:require [clirc.probl1.probl1 :as cmp]))
-(def n 3) ;; 3 é o numero de bits que serão comparados
-(cmp/cmp-n-bits n) 
-(println (aon-eval (cmp/cmp-n-bits n) [0 0 1, 0 0 0])))
+(eval-prog-aon (cmp/cmp-n-bits 3) [0 0 1 0 0 0])
 ```
