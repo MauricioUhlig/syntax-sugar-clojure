@@ -1,7 +1,8 @@
 (ns clirc.core
   (:gen-class)
   (:require [clojure.core.match :refer [match]]
-            [clirc.bool-logic :refer [map->bitvec]]))
+            [clirc.bool-logic :refer [map->bitvec]]
+            [clirc.probl2.probl2 :as iff]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -41,7 +42,7 @@
 
 (def izo-funcs
   "Set of predefined functions for the IZO dilect."
-  {'if   {:arity 3 :body #(if (= %1 1) %2 %3)}
+  {'iff   {:arity 3 :body #(if (= %1 1) %2 %3)}
    'zero {:arity 1 :body (fn [_] 0)}
    'one  {:arity 1 :body (fn [_] 1)}})
 
@@ -162,3 +163,10 @@
     [(x :guard symbol?)] (get env x)
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
+
+(def iff '[(if (:in 0)
+            [(set! a (and (:in 1) (:int 2)))
+             (set! b (or (:in 1) (:in 2)))]
+            [(set! a (xor (:in 1) (:int 2)))
+             (set! c (nand (:in 1) (:in 2)))])])
+(println (iff/expand-if iff))
