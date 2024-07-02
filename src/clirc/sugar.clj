@@ -97,6 +97,8 @@
   [arg count]
   (match [arg]
     [(var :guard symbol?)] {:prep [], :var var, :count count}
+    [([:in x] :seq)] {:prep [], :var `(:in ~x), :count count}
+    [([:out x] :seq)] {:prep [], :var `(:out ~x), :count count}
     [([func & args] :seq)] (let [ex-args (expand-inline-arg-list args count)
                                  ex-prep (:prep ex-args)
                                  ex-rawargs (:vars ex-args)
