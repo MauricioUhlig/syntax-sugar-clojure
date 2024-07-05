@@ -8,7 +8,7 @@
 (def cmd "(set! a (and (:in 0) (:in 1)))")
 
 ;; Vai ajudar pra não escrever tudo com quote e unquote '(~())
-(println  (read-string cmd))
+;;(println  (read-string cmd))
 
 (defn create-var [a i] (str a i))
 
@@ -17,7 +17,8 @@
         :else (eval (list (first exp) index (nth exp 2)))))
 (defn expand-ref-exp [ref] (second ref))
 
-(declare expand-for-body
+(declare expand-for-loop
+         expand-for-body
          expand-for-body-var
          expand-for-body-func
          expand-for-body-var-list)
@@ -26,11 +27,17 @@
   [prog]
   (letfn [(expand-for-acc [acc sttmt]
             (match [sttmt]
-              [(['for condition & body] :seq)]
-              (concat acc (expand-for-body 0 body))
+              [(['for loop-range & body] :seq)]
+              (concat acc (expand-for-loop loop-range body))
               :else (concat acc [sttmt])))]
     (reduce expand-for-acc [] prog)))
 
+(defn expand-for-loop
+  [loop-range body]
+  (let [[_ start end] loop-range]
+    (letfn [(aux [acc index]
+               (concat acc (expand-for-body index body)))]
+    (reduce aux [] (range start (inc end)) ))))
 
 
 (defn expand-for-body 
@@ -60,3 +67,16 @@
   (letfn [(aux [acc arg] 
                (concat acc [(expand-for-body-var arg index)]))]
     (reduce aux [] args)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(def code_for '[(set! carry0 (zero (:in 0)))
+                (for [i 0 2]
+                  (set! (:var temp i) (xor (:in (:ref i)) (:in (:ref (+ i 3)))))
+                  (set! (:out (:ref i)) (xor (:var temp i) (:var carry i)))
+                  (set! (:var a i) (and (:in (:ref i)) (:in (:ref (+ i 3)))))
+                  (set! (:var b i) (and (:var temp i) (:var carry i)))
+                  (set! (:var carry (+ i 1)) (or (:var a i) (:var b i))))
+                (set! (:out 3) (and carry3 carry3))])
+
+(println (expand-for code_for))
