@@ -165,5 +165,3 @@
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
 
-
-(println (cmp/cmp-n-bits-nand 2))
