@@ -3,12 +3,14 @@
   (:require [clojure.core.match :refer [match]]
             [clirc.bool-logic :refer [map->bitvec]]
             [clirc.probl2.probl2 :as iff]
-            [clirc.probl1.probl1 :as cmp]))
+            [clirc.probl1.probl1 :as cmp]
+            [clirc.probl3.probl3 :as f4r]
+            [clirc.probl3.proc :as proc]))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (println ""))
 
 
 ;;; There are 4 dialects of the language Clirc (CIRC): AON, IZO, NAND and NOR.
@@ -103,6 +105,7 @@
             lhs (nth sttmt 1)
             rhs (nth sttmt 2)
             value (eval-funcall rhs env)]
+        ;;(println "eval-prog" lhs value)
         (match [lhs]
           ;; Assignment to variable
           [(var :guard symbol?)]
@@ -144,6 +147,7 @@
       ;;
       :else
       (let [arg-values (map #(eval-expr %1 env) args)]
+        ;;(println "eval value" arg-values env)
         (apply (:body func) arg-values)))))
 
 
@@ -165,5 +169,74 @@
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
 
+(def procs '[(proc HalfAdder [A B result]
+                   (set! c (or A result))
+                   (set! result (xor B c))
+                   (return (and B c)))
+             (proc xor [a b]
+                   (set! or1 (or a b))
+                   (set! and1 (and a b))
+                   (set! nand1 (not and1))
+                   (return (and or1 nand1)))
+             (proc ZERO [a]
+                   (set! nota (not a))
+                   (return (and a nota)))
+             (proc mult [A B carry result]
+                   (set! mult1 (and A B))
+                   (return (HalfAdder carry mult1 result)))
+             (proc identidade [a] (return (and a a)))])
 
-(println (cmp/cmp-n-bits-nand 2))
+(def for-2-bits '[(for [i 0 3]
+                  (set! (:out (:ref i)) (ZERO (:in (:ref i))))) ;; atribuindo constante 0
+                (for [i 0 1]
+                  (set! (:out (:ref (- 3 i))) ;; Salva o resultado da multiplicação no bit menos significativo
+                        (mult (:in 1) ;; Primeiro termo
+                              (:in (:ref (- 3 i))) ;; Segundo termpo
+                              (:out (:ref (- 3 i))) ;; Carry da operação anterior
+                              (:out (:ref (- 2 i))))) ;; Onde o Carry da operação atual será armazenado
+
+                  (set! (:out (:ref (- 2 i))) ;; Salva o resultado da multiplicação no bit menos significativo
+                        (mult (:in 0) ;; Primeiro termo
+                              (:in (:ref (- 3 i))) ;; Segundo termpo
+                              (:out (:ref (- 2 i))) ;; Carry da operação anterior
+                              (:out (:ref (- 1 i))))) ;; Onde o Carry da operação atual será armazenado
+                  )])
+
+(def for-3-bits '[(for [i 0 5]
+                  (set! (:out (:ref i)) (ZERO (:in (:ref i))))) ;; atribuindo constante 0
+                (for [i 0 2]
+                  (set! (:var carry0$ i) (identidade (:out (:ref (- 3 i))))) ;; garantindo a existencia do primeiro carry
+                  (set! multiplicador (identidade (:in (:ref (- 5 i)))))
+                  (set! (:var carry1$ i);; Salva o resultado da multiplicação no bit menos significativo
+                        (mult (:in 2) ;; Primeiro termo
+                              multiplicador ;; Segundo termpo
+                              (:var carry0$ i) ;; Carry da operação anterior
+                              (:out (:ref (- 5 i))))) ;; Onde o resultado da operação atual será armazenado
+
+                  (set! (:var carry2$ i) ;; Salva o resultado da multiplicação no bit menos significativo
+                        (mult (:in 1) ;; Primeiro termo
+                              multiplicador ;; Segundo termpo
+                              (:var carry1$ i) ;; Carry da operação anterior
+                              (:out (:ref (- 4 i))))) ;; Onde o resultado da operação atual será armazenado
+
+                  (set! (:var carry3$ i) ;; Salva o resultado da multiplicação no bit menos significativo
+                        (mult (:in 0) ;; Primeiro termo
+                              multiplicador ;; Segundo termpo
+                              (:var carry2$ i) ;; Carry da operação anterior
+                              (:out (:ref (- 3 i))))) ;; Onde o resultado da operação atual será armazenado
+
+                  (set! (:out (:ref (- 2 i))) (identidade (:var carry3$ i)))
+                  )])
+
+;;(def proc-for-2-bits (into [] (concat procs for-2-bits)))
+(def proc-for-3-bits (into [] (concat procs for-3-bits)))
+
+;;(def proc-2-bits (f4r/expand-for proc-for-2-bits))
+(def proc-3-bits (f4r/expand-for proc-for-3-bits))
+;;(def proc-code-2 (proc/handle-proc proc-2-bits))
+(def proc-code-3 (proc/handle-proc proc-3-bits))
+(println proc-code-3)
+
+;;(println (eval-prog-aon proc-code-2 [1 1, 1 1]))
+(println (eval-prog-aon proc-code-3 [1 1 1, 1 1 0]))
+

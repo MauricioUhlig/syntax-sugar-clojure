@@ -41,7 +41,7 @@
     (reduce aux [] body)))
 
 (defn expand-proc-input-args [args] (map #(keyword %) args))
-(defn expand-proc-funcs [var func input-args] {:var var :func (first func) :args (expand-proc-args (rest func) input-args)})
+(defn expand-proc-funcs [var func input-args] {:var (first (expand-proc-args [var] input-args)) :func (first func) :args (expand-proc-args (rest func) input-args)})
 
 (defn expand-proc-args 
   [func-args input-args] 
@@ -62,7 +62,7 @@
     tree))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def counter (atom -1))
+(def counter (atom 0))
 (defn count-inc [] (swap! counter inc))
 
 (declare bind-in-args
@@ -75,16 +75,24 @@
          create-sttmt)
 
 (defn handle-proc
-  [prog proc-tree]
-  (letfn [(aux [acc sttmt]
-            (match [sttmt]
-              [(['set! var func] :seq)]
-              (let [func-tree (handle-proc-get-func-tree (first func) proc-tree)] 
-                (count-inc)
-                (cond (nil? func-tree) acc
-                      :else (into [] (concat acc (handle-proc-func-tree var func func-tree)))))
-              :else nil))]
-    (reduce aux [] prog)))
+  ([prog]
+   (handle-proc prog (expand-proc prog)))
+  ([prog proc-tree]
+   ;;(println proc-tree)
+   (loop [sttmts prog]
+     (let [exec (letfn [(aux [acc sttmt]
+                          (match [sttmt]
+                            [(['set! var func] :seq)]
+                            (let [func-tree (handle-proc-get-func-tree (first func) proc-tree)]
+                              (cond (nil? func-tree) {:sttmts (into [] (concat (:sttmts acc) [sttmt])) :has-proc? (:has-proc? acc)}
+                                    :else (do
+                                            (count-inc) ;; só incrementa quando existe um procedimento para abrir na arvore
+                                            {:sttmts (into [] (concat (:sttmts acc) (handle-proc-func-tree var func func-tree)))
+                                             :has-proc? true})))
+                            :else nil))]
+                  (reduce aux {:sttmts [] :has-proc? false} sttmts))]
+       (cond (true? (:has-proc? exec)) (recur (:sttmts exec))
+             :else (:sttmts exec))))))
 
 (defn handle-proc-get-func-tree
   [func-name proc-tree]
@@ -95,7 +103,7 @@
 
 (defn bind-in-args
   [func-name in-args proc-args]
-  (println func-name in-args proc-args)
+  ;;(println "bind-in-args" func-name in-args proc-args)
   (cond (not= (count in-args) (count proc-args))
         (throw (ex-info "Wrong number of arguments." {:fname func-name :in-args in-args :proc-args proc-args}))
         (empty? in-args) nil
@@ -105,7 +113,7 @@
 
 (defn create-var-name 
   [func var]
-  (str func @counter "$" var))
+  (symbol (str func @counter "$" var)))
 
 (defn handle-proc-func-tree
   [var func tree] 
@@ -113,6 +121,7 @@
         binded-args (bind-in-args (first func) func-args (:in tree))
         body-sttmt (handle-proc-func-tree-body-sttmts binded-args tree)
         return (handle-proc-func-tree-return var tree binded-args)]
+    ;;(println "binded-args" (:name tree) binded-args)
     (concat body-sttmt return))  )
 
 (defn handle-proc-func-tree-return
@@ -123,27 +132,36 @@
 (defn handle-proc-func-tree-body-sttmts
   [binded-args tree]
   (letfn [(aux [acc body-sttmt]
-               (concat acc (create-sttmt (:name tree) (:var body-sttmt) (:args body-sttmt) binded-args)))]
+               (concat acc (create-sttmt (:name tree) (:func body-sttmt) (:var body-sttmt) (:args body-sttmt) binded-args)))]
     (reduce aux [] (:body-sttmts tree))))
 
 (defn create-sttmt 
-  [func var func-args binded-args]
-  `((set! ~(create-var-name func var) (~func ~@(bind-func-args func binded-args func-args)))))
+  [func func-name var func-args binded-args]
+  `((set! ~@(bind-func-args func binded-args [var]) (~func-name ~@(bind-func-args func binded-args func-args)))))
 
 (defn bind-func-args 
   [func bind-in-args func-args]
+  ;;(println func bind-in-args func-args)
   (letfn [(aux [acc func-arg]
                (concat acc [(cond (keyword? func-arg) (get-in bind-in-args [func-arg])
+                                  (list? func-arg) func-arg
                                   :else (create-var-name func func-arg))]))]
     (reduce aux [] func-args)))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def proc '[(proc xor [a b]
+(def proc '[(proc full-adder [a b cin cout]
+                  (set! xor1 (xor a b))
+                  (set! and1 (and xor1 cin))
+                  (set! and2 (and a b))
+                  (set! cout (or and1 and2)) 
+                  (return (xor xor1 cin)))
+            (proc xor [a b]
                  (set! or1 (or a b))
                  (set! and1 (and a b))
                  (set! nand1 (not and1))
                  (return (and or1 nand1)))
-            (set! (:out 0) (xor (:in 0), (:in 1)))])
+            
+            (set! soma (full-adder (:in 0) (:in 1) (:out 0) (:out 1)))])
 
-(def tree (expand-proc proc))
-(println (handle-proc proc tree))
+;;(def tree (expand-proc proc))
+;;(println (handle-proc proc tree))
