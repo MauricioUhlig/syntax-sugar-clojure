@@ -4,6 +4,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; RECURSOS AUXILIARES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+"
+Função auxiliar para criar código 
+
+`result-var` : Nome da variável resultante das transformações
+`cnd` : Condição a ser avaliada no IFF
+`then` : trecho de código CLIRC para caso da condição ser verdadeira
+`else` : trecho de código CLIRC para caso da condição ser falsa
+"
 (defn create-if 
   [result-var cnd then else]
   `((set! ~result-var (~(symbol "iff") ~cnd ~(if (nil? then) result-var then) ~(if (nil? else) result-var else)))))
@@ -52,6 +60,14 @@
                      cnd (get-in tree [:cond])]
                  (concat acc (create-if sttmt-var cnd then-var-name else-var-name))))]
     (reduce aux () vars)))
+
+" 
+ 
+
+ `tree`: 
+
+ Retorno: 
+"
 
 (defn translate-if
   [tree]
