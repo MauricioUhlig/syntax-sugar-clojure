@@ -1,0 +1,57 @@
+:procs
+[    
+    :name xor
+    :in 
+        :a value
+        :b value
+    :body-sttmt
+        [
+            :sttmt
+                :var or1
+                :func or 
+                :args 
+                    :a 
+                    :b
+            :sttmt
+                :var and1
+                :func and 
+                :args 
+                    :a 
+                    :b
+            :sttmt
+                :var nand1
+                :func not 
+                :args 
+                    and1
+        ]
+    :return 
+        :func and
+        :args 
+            or1
+            nand1
+]
+
+
+(
+    {:name FullAdder, 
+    :in (:a :b :cin :cout), 
+    :body-sttmts 
+    [
+        {
+            :var xor1, 
+            :func xor, 
+            :args (:a :b)
+        } 
+        {
+            :var and1, 
+            :func and, 
+            :args (xor1 :cin)
+        } 
+        {
+            :var and2, 
+            :func and, 
+            :args (:a :b)
+        } 
+        {
+            :var cout, 
+            :func or, :args (and1 and2)}], :return {:var nil, :func xor, :args (xor1 :cin)}} {:name xor, :in (:a :b), :body-sttmts [{:var or1, :func or, :args (:a :b)} {:var and1, :func and, :args (:a :b)} {:var nand1, :func not, :args (and1)}], :return {:var nil, :func and, :args (or1 nand1)}} {:name ZERO, :in (:a), :body-sttmts [{:var nota, :func not, :args (:a)}], :return {:var nil, :func and, :args (:a nota)}} {:name ONE, :in (:a), :body-sttmts [{:var nota, :func not, :args (:a)}], :return {:var nil, :func or, :args (:a nota)}})
