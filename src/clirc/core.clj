@@ -4,7 +4,8 @@
             [clirc.bool-logic :refer [map->bitvec]]
             [clirc.probl2.probl2 :as iff]
             [clirc.probl1.probl1 :as cmp]
-            [clirc.probl3.probl3 :as f4r]))
+            [clirc.probl3.probl3 :as f4r]
+            [clirc.probl4.probl4 :as tuples]))
 
 (defn -main
   "I don't do a whole lot ... yet."
