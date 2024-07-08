@@ -1,23 +1,26 @@
 (ns clirc.probl1.probl1)
 
-" Recebe um número N e retorna a string 'tempN' "
-(defn create-temp [n] (symbol (str "temp" n)))
+
+(defn create-temp 
+  " Recebe um número N e retorna a string 'tempN' "
+  [n] (symbol (str "temp" n)))
 
 " Constantes "
 (def aon_constant 5)
 (def nand_constant 6)
 
-" 
- Função auxiliar responsável por montar a estrutura da lista com o padrão de crescimento encontrado (da quantidade de operadores necessários)
- ao aumentar a quantidade de bits a serem comparados.
 
- `Total`: total de bits a serem comparados
-
- Retorno: lista no formato CLIRC-AON. E.g.: [(set! temp1 (not (:in 5)))
-                                             (set! temp2 (and (:in 2) temp1))
-                                             (set! temp3 (not (:in 4))) ...]
-"
 (defn cmp-n-bits-helper-aon
+  " 
+   Função auxiliar responsável por montar a estrutura da lista com o padrão de crescimento encontrado (da quantidade de operadores necessários)
+   ao aumentar a quantidade de bits a serem comparados.
+  
+   `Total`: total de bits a serem comparados
+  
+   Retorno: lista no formato CLIRC-AON. E.g.: [(set! temp1 (not (:in 5)))
+                                               (set! temp2 (and (:in 2) temp1))
+                                               (set! temp3 (not (:in 4))) ...]
+  "
   [total]
   (loop [_atual 2 _total total _lista []]
   ;; Shift é utilizado para nomeação de variáveis temporárias
@@ -39,6 +42,8 @@
             (into [] (concat result `[(set! ~(list :out 0) (~(symbol "and") ~(create-temp (+ shift 5)) ~(create-temp (+ shift 5))))]))
             :else (recur (+ _atual 1) _total result)))))
 
+
+(defn cmp-n-bits-aon
 "
 Comparador de N bits com funções AON.
 
@@ -48,7 +53,6 @@ Retorno:  lista no formato CLIRC. E.g.: [(set! temp1 (not (:in 5)))
                                              (set! temp2 (and (:in 2) temp1))
                                              (set! temp3 (not (:in 4))) ...]
 "
-(defn cmp-n-bits-aon
   [n]
   (cond
     (= n 1)
@@ -64,17 +68,18 @@ Retorno:  lista no formato CLIRC. E.g.: [(set! temp1 (not (:in 5)))
                      (cmp-n-bits-helper-aon n)))))
 
 
-" 
- Função auxiliar responsável por montar a estrutura da lista com o padrão de crescimento encontrado
- (da quantidade de operadores necessários) ao aumentar a quantidade de bits a serem comparados.
 
- `Total`: número de bits a serem comparados
-
- Retorno: lista no formato CLIRC-NAND. E.g.: [(set! temp1 (nand (:in 5)))
-                                             (set! temp2 (nand (:in 2) temp1))
-                                             (set! temp3 (nand (:in 4))) ...]
-"
  (defn cmp-n-bits-helper-nand
+   " 
+    Função auxiliar responsável por montar a estrutura da lista com o padrão de crescimento encontrado
+    (da quantidade de operadores necessários) ao aumentar a quantidade de bits a serem comparados.
+   
+    `Total`: número de bits a serem comparados
+   
+    Retorno: lista no formato CLIRC-NAND. E.g.: [(set! temp1 (nand (:in 5)))
+                                                (set! temp2 (nand (:in 2) temp1))
+                                                (set! temp3 (nand (:in 4))) ...]
+   "
    [total]
    (loop [_atual 2 _total total _lista []]
      (let [shift (+ (* (- _atual 2) nand_constant) 3)
@@ -93,16 +98,17 @@ Retorno:  lista no formato CLIRC. E.g.: [(set! temp1 (not (:in 5)))
                                       (set! ~(list :out 0) (~(symbol "nand") ~(create-temp (+ shift 7)) ~(create-temp (+ shift 7))))]))
             :else (recur (+ _atual 1) _total result)))))
 
-"
-Comparador de N bits com a função NAND.
 
-`n` : Quantidade de bits dos números a serem comparados
-
-Retorno:  lista no formato CLIRC-NAND. E.g.: [(set! temp1 (nand (:in 5) (:in 3)))
-                                             (set! temp2 (nand (:in 2) temp1))
-                                             (set! temp3 (nand (:in 4))) ...]
-"
 (defn cmp-n-bits-nand
+  "
+  Comparador de N bits com a função NAND.
+  
+  `n` : Quantidade de bits dos números a serem comparados
+  
+  Retorno:  lista no formato CLIRC-NAND. E.g.: [(set! temp1 (nand (:in 5) (:in 3)))
+                                               (set! temp2 (nand (:in 2) temp1))
+                                               (set! temp3 (nand (:in 4))) ...]
+  "
   [n]
   (cond
     (= n 1)
