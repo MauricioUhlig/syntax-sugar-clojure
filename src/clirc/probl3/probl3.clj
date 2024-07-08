@@ -296,7 +296,66 @@
 
 (def proc-3-bits (expand-for proc-for-3-bits))
 (def proc-code-3 (handle-proc proc-3-bits))
-(println proc-code-3)
+;;(println proc-code-3)
 
 ;; Executar no arquivo core.clj
 ;;(println (eval-prog-aon f4r/proc-code-3 [1 1 1 , 1 1 1]))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Gerador de Multiplicador para N-bits
+(declare multi-N-bits-set-zero
+         create-mult-N-bits
+         multi-N-bits-for-header-str
+         multi-N-bits-for-body-str
+         multi-N-bits-for-full-body)
+(defn mult-N-bits-clirc 
+  [n]
+  (let [mult-with-sugar (create-mult-N-bits n)
+        expanded-for (expand-for mult-with-sugar)]
+    (handle-proc expanded-for)))
+(defn create-mult-N-bits
+  [n]
+  (into [] (concat
+            procs
+            (multi-N-bits-set-zero n)
+            (multi-N-bits-for-full-body n))))
+
+(defn multi-N-bits-set-zero [n] (read-string (format "[(for [i 0 %s](set! (:out (:ref i)) (ZERO (:in (:ref i)))))]" (- (* n 2) 1))))
+
+(defn multi-N-bits-for-header-str
+  [n]
+  (format "[(for [i 0 %1$d]
+          (set! (:var carry0$ i) (ZERO (:in (:ref i))))
+          (set! multiplicador (identidade (:in (:ref (- %3$d i)))))" (- n 1) n (- (* n 2) 1)))
+(defn multi-N-bits-for-mult-sttmt-str
+  [i bit-a bit-b]
+  (str "(set! (:var carry" (inc i) "$ i)
+              (mult (:in " bit-a ")
+                    multiplicador
+                    (:var carry" i "$ i)
+                    (:out (:ref (- " bit-b" i)))))"))
+(defn multi-N-bits-last-carry [n] (str "(set! (:out (:ref (- "(- n 1)" i))) (identidade (:var carry"n"$ i))))]" ))
+
+(defn multi-N-bits-for-body-str 
+  [n]
+  (loop [i 0 bit-a (- n 1) bit-b (- (* n 2) 1) acc ""]
+    (cond (= i n) acc
+          :else (recur
+                 (inc i)
+                 (dec bit-a)
+                 (dec bit-b)
+                 (str acc (multi-N-bits-for-mult-sttmt-str i bit-a bit-b))))))
+(defn multi-N-bits-for-full-body
+  [n]
+  (let [header (multi-N-bits-for-header-str n)
+        body (multi-N-bits-for-body-str n)
+        carry (multi-N-bits-last-carry n)
+        full-for-str (str header body carry)] 
+    (read-string full-for-str)))
+
+;;;; Execução 
+;;(println (mult-N-bits-clirc 3)) ;; Gerando código em CLICR padrão para calcular a multiplicação de numeros de 3 bits
+;; Executar no arquivo core.clj
+;;(println "mult-N-bits sem sintax sugar" (f4r/mult-N-bits-clirc 4))
+;;(println "Resultado multiplicação de [1 1 1 1] x [1 1 1 1] =" (eval-prog-aon (f4r/mult-N-bits-clirc 4) [1 1 1 1 , 1 1 1 1]))

@@ -168,5 +168,7 @@
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
 
-(println (eval-prog-aon f4r/proc-code-3 [1 1 1 , 1 1 1]))
+;;(println "mult-N-bits sem sintax sugar" (f4r/mult-N-bits-clirc 4))
+;;(println "Resultado multiplicação de [1 1 1 1] x [1 1 1 1] =" (eval-prog-aon (f4r/mult-N-bits-clirc 4) [1 1 1 1 , 1 1 1 1]))
+
 
