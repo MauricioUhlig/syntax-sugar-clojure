@@ -248,7 +248,7 @@
 ;;(println (handle-proc proc tree))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def procs '[(proc calc-carry [carry-prev mult1 result-out]
+(def procs '[(proc calc-result-carry [carry-prev mult1 result-out]
                    (set! xor1 (xor carry-prev mult1))
                    (set! and2 (and xor1 result-out))
                    (set! result-out (xor xor1 result-out))
@@ -264,7 +264,7 @@
                    (return (and a nota)))
              (proc mult [A B carry-prev result-out]
                    (set! mult1 (and A B))
-                   (return (calc-carry carry-prev mult1 result-out)))
+                   (return (calc-result-carry carry-prev mult1 result-out)))
              (proc identidade [a] (return (and a a)))])
 
 (def for-3-bits '[(for [i 0 5]
@@ -290,13 +290,14 @@
                                 (:var carry2$ i) ;; Carry da operação anterior
                                 (:out (:ref (- 3 i))))) ;; Onde o resultado da operação atual será armazenado
 
+                    ;; Atribui o ultimo carry ao ultimo bit de outpub
                     (set! (:out (:ref (- 2 i))) (identidade (:var carry3$ i))))])
 
 (def proc-for-3-bits (into [] (concat procs for-3-bits)))
 
 (def proc-3-bits (expand-for proc-for-3-bits))
 (def proc-code-3 (handle-proc proc-3-bits))
-;;(println proc-code-3)
+(println proc-code-3)
 
 ;; Executar no arquivo core.clj
 ;;(println (eval-prog-aon f4r/proc-code-3 [1 1 1 , 1 1 1]))
