@@ -83,7 +83,7 @@ Retorno:  lista no formato CLIRC. E.g.: [(set! temp1 (not (:in 5)))
            result (into [] (concat _lista
                                 `[(set! ~(create-temp (+ shift 1)) (~(symbol "nand") ~(list :in indiceB) ~(list :in indiceA))) 
                                    (set! ~(create-temp (+ shift 2)) (~(symbol "nand") ~(list :in indiceA) ~(list :in indiceA)))
-                                   (set! ~(create-temp (+ shift 3)) (~(symbol "nand") ~(list :in indiceA) ~(create-temp (+ shift 2))))
+                                   (set! ~(create-temp (+ shift 3)) (~(symbol "nand") ~(list :in indiceA) ~(create-temp (+ shift 1))))
                                    (set! ~(create-temp (+ shift 4)) (~(symbol "nand") ~(list :in indiceB) ~(create-temp (+ shift 2))))
                                    (set! ~(create-temp (+ shift 5)) (~(symbol "nand") ~(create-temp (+ shift 0)) ~(create-temp (+ shift 4)))) 
                                    (set! ~(create-temp (+ shift 6)) (~(symbol "nand") ~(create-temp (+ shift 3)) ~(create-temp (+ shift 5))))]))]

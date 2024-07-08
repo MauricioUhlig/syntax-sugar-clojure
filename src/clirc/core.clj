@@ -3,12 +3,13 @@
   (:require [clojure.core.match :refer [match]]
             [clirc.bool-logic :refer [map->bitvec]]
             [clirc.probl2.probl2 :as iff]
-            [clirc.probl1.probl1 :as cmp]))
+            [clirc.probl1.probl1 :as cmp]
+            [clirc.probl3.probl3 :as f4r]))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (println ""))
 
 
 ;;; There are 4 dialects of the language Clirc (CIRC): AON, IZO, NAND and NOR.
@@ -103,6 +104,7 @@
             lhs (nth sttmt 1)
             rhs (nth sttmt 2)
             value (eval-funcall rhs env)]
+        ;;(println "eval-prog" lhs value)
         (match [lhs]
           ;; Assignment to variable
           [(var :guard symbol?)]
@@ -144,6 +146,7 @@
       ;;
       :else
       (let [arg-values (map #(eval-expr %1 env) args)]
+        ;;(println "eval value" arg-values env)
         (apply (:body func) arg-values)))))
 
 
@@ -165,5 +168,7 @@
     :else (throw (ex-info "Invalid expression."
                           {:expr expr :env env}))))
 
+;;(println "mult-N-bits sem sintax sugar" (f4r/mult-N-bits-clirc 4))
+;;(println "Resultado multiplicação de [1 1 1 1] x [1 1 1 1] =" (eval-prog-aon (f4r/mult-N-bits-clirc 4) [1 1 1 1 , 1 1 1 1]))
 
-(println (cmp/cmp-n-bits-nand 2))
+
