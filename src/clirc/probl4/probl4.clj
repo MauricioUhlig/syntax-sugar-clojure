@@ -8,13 +8,25 @@
 (defn create-variable-store []
   (->VariableStore (atom []) (atom []) (atom [])))
 
-(defn parse-line [line]
+(defn parse-line 
+  "Método responsável por ler o conteúdo da linha (statement de atribuição) e mapeia as variaveis existentes
+   
+   `lhs`: é a variável que recebe a atribuição
+   
+   `var1` e `var2`: são as variáveis de input do `nand`
+   
+   O retorno é uma lista contendo as 3 variáveis [lhs var1 var2]"
+  [line] 
   (let [lhs (second line)
         var1 (nth (nth line 2) 1)
         var2 (nth (nth line 2) 2)] 
     [lhs var1 var2]))
 
-(defn add-variable [store var]
+(defn add-variable 
+  "Método responsável por receber um dicionário de variáveis `store` e uma variável `var`.
+   Sua lógica de operação é verificar se a variável `var` existe dentro do dicionário `store`.
+   Se existe, nada acontece, senão o valor é armazenado em sua respectiva chave no dicionário `store`"
+  [store var]
   (let [inputs (:inputs store)
         workspace (:workspace store)
         outputs (:outputs store)] 
@@ -29,7 +41,11 @@
           :else (when-not (some #(= % var) @workspace)
                   (swap! workspace conj var)))))
 
-(defn add-all-variables [store code]
+(defn add-all-variables 
+  "Método responsável por executar o parser `parse-line` e salvar as variáveis no dicionário com o método `add-variable`
+   
+   O retorno é o dicionário `store` preenchido com todas as variáveis existentes no código CLIRC de input"
+  [store code]
   (reduce (fn [s line]
             (reduce (fn [s var]
                       (add-variable s var)
@@ -39,13 +55,18 @@
           store
           code))
 
-(defn collect-variables [store]
+(defn collect-variables 
+  "Método responsável por retornar a lista de todas as váriaveis existentes no dicionário de forma ordenada por tipo `inputs workspace ouputs`"
+  [store]
   (let [inputs @(:inputs store)
         workspace @(:workspace store)
         outputs @(:outputs store)] 
     (concat (sort-by :in inputs) (sort workspace) (sort-by :out outputs))))
 
-(defn generate-triples [variables code]
+(defn generate-triples 
+  "Método responsável por executar o parser do código, retornando as variáveis e procurando estas na lista de variáveis existentes.
+   Retorna uma lista de indices das variavis, sendo o resultado uma tupla"
+  [variables code]
   (reduce (fn [acc line]
             (let [[lhs var1 var2] (parse-line line)]
               (conj acc [(.indexOf variables lhs)
@@ -54,7 +75,13 @@
           []
           code))
 
-(defn clirc2tuples [code]
+(defn clirc2tuples 
+  "Método que recebe o código em CLIRC padrão e transforma em uma lista de tuplas
+   
+   `code`: Programa em CLIRC padrão
+   
+   Retorna lista de tuplas. Ex.: [1 1 [[1 0 2] [2 1 3]...]]"
+  [code] 
   (let [store (create-variable-store)]
     (add-all-variables store code)
     (let [variables (collect-variables store)]
@@ -128,4 +155,5 @@
                   ])
 
 (def tuple (clirc2tuples code_clicr))
+(println "tuplas "tuple)
 (println (run-nand-tuples tuple [1 1 0]))
