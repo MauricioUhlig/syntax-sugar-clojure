@@ -85,8 +85,10 @@ Função auxiliar para criar código
   [prog]
   (let [count-if 1
         aux (fn [acc sttmt]
-              (let [tree (expand-if-sttmt-tree sttmt count-if)
-                    sttmt_result (translate-if tree)]
-                (into [] (concat acc sttmt_result))))]
+              (cond (= (first sttmt) 'if)
+                    (let [tree (expand-if-sttmt-tree sttmt count-if)
+                          sttmt_result (translate-if tree)]
+                      (into [] (concat acc sttmt_result)))
+                    :else (into [] (concat acc [sttmt]))))]
        (reduce aux [] prog)))
 
