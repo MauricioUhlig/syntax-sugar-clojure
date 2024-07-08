@@ -172,4 +172,12 @@
 ;;(println "mult-N-bits sem sintax sugar" (f4r/mult-N-bits-clirc 4))
 ;;(println "Resultado multiplicação de [1 1 1 1] x [1 1 1 1] =" (eval-prog-aon (f4r/mult-N-bits-clirc 4) [1 1 1 1 , 1 1 1 1]))
 
+;; Teste de execução do IF
+;; (def if-code '[(set! a (and (:in 1) (:int 2))) 
+;;                (if (:in 0)
+;;                  [(set! a (and (:in 1) (:int 2)))
+;;                   (set! b (or (:in 1) (:in 2)))]
+;;                  [(set! a (xor (:in 1) (:int 2)))
+;;                   (set! b (nand (:in 1) (:in 2)))])])
 
+;; (println (iff/expand-if if-code))
