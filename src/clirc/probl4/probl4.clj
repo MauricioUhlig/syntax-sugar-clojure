@@ -92,6 +92,7 @@
 ;;;;;; Run tuple list
 
 (defn get-max-index
+  "Busca o maior indice existente nas tuplas - Equivalente a saber quantas variáveis existem"
   [workspace] 
   (reduce (fn [max-value l]
             (let [local-max (apply max l)] 
@@ -101,11 +102,13 @@
           workspace))
 
 (defn create-map
+  "Cria um dicionário, atribuindo valor 0 para todas as variáveis possíveis no conjunto de tuplas informado"
   [tuples]
   (let [max-index (get-max-index (nth tuples 2))]
     (reduce (fn[acc i] (assoc acc i 0)) {} (range (+ max-index 1)))))
 
 (defn set-inputs
+  "Atribui o valor do conjunto de input nas respectivas variáveis no dicionário de trabalho"
   [inputs tuple-map]
   (loop [acc tuple-map i (- (count inputs) 1) input inputs]
     (cond (seq input)
@@ -115,6 +118,7 @@
 (defn nand [a b](- 1 (* a b)))
 
 (defn exec-tuples 
+  "Executa os conjuntos de tuplas, aplicando `nand` nas variaveis das posições `1` e `2` de cada tupla, gravando no dicionário no indice da posição `0` da tupla"
   [tuples-map tuples-code] 
   (reduce (fn [acc tuple-code] 
             (let [key (first tuple-code)
@@ -126,6 +130,7 @@
           tuples-code))
 
 (defn get-ouput
+  "Retorna a lista de variáveis `output`, calculando o indice baseado na quantidade de váriaveis totais e variáveis `ouput`"
   [result-map output-count]
   (let [mk (- (count result-map) 1)
         shift-left (- mk output-count)] 
@@ -136,6 +141,9 @@
           :else result))))
 
 (defn run-nand-tuples
+  "Método de execução que recebe as tuplas e os bits de inputs.
+   
+   Retorna o resultado da execução das tuplas sobre os inputs."
   [tuples inputs]
   (cond (= (count inputs) (first tuples))
         (let [tuple-map (create-map tuples)
@@ -155,5 +163,5 @@
                   ])
 
 (def tuple (clirc2tuples code_clicr))
-(println "tuplas "tuple)
+(println "tuplas " tuple)
 (println (run-nand-tuples tuple [1 1 0]))
