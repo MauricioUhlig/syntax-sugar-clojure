@@ -1,4 +1,4 @@
-# Tarefa 2 -- Teoria da Computação -- 2021/2
+# Tarefa 2 -- Teoria da Computação -- 2024/1
 **Definindo Computação & Açucar Sintático & Código como Dados, Dados como Código**
 **Autores:** Mauricio Uhlig & Serenna Ferrari
 
