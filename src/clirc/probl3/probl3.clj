@@ -15,7 +15,8 @@
 ;;;;;; CLIRC-FOR
 (defn create-var [a i] (symbol (str a i)))
 
-(defn exp-index-repace 
+;; 
+(defn exp-index-replace
   [exp index]
   (letfn [(aux [acc item]
                (cond (= item (symbol "i"))(concat acc [index])
@@ -25,7 +26,8 @@
 (defn exp-index [exp index] 
   (cond (symbol? exp) index
         (number? exp) exp
-        :else (eval (exp-index-repace exp index))))
+        :else (eval (exp-index-replace exp index))))
+
 (defn expand-ref-exp
   [ref]
   (cond (list? ref) (second ref)
