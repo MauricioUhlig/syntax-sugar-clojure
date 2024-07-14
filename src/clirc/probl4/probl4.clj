@@ -85,7 +85,6 @@
   (let [store (create-variable-store)]
     (add-all-variables store code)
     (let [variables (collect-variables store)]
-      (println variables)
       [(count @(:inputs store)) (count @(:outputs store)) (generate-triples variables code)])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -162,6 +161,6 @@
                   (set! (:out 1) (nand temp0 temp1))
                   ])
 
-(def tuple (clirc2tuples code_clicr))
-(println "tuplas " tuple)
-(println (run-nand-tuples tuple [1 1 0]))
+;(def tuple (clirc2tuples code_clicr))
+;(println "tuplas " tuple)
+;(println (run-nand-tuples tuple [1 1 0]))

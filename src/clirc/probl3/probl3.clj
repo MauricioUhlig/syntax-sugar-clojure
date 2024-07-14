@@ -299,7 +299,7 @@
 
 (def proc-3-bits (expand-for proc-for-3-bits))
 (def proc-code-3 (handle-proc proc-3-bits))
-(println proc-code-3)
+;(println proc-code-3)
 
 ;; Executar no arquivo core.clj
 ;;(println (eval-prog-aon f4r/proc-code-3 [1 1 1 , 1 1 1]))
