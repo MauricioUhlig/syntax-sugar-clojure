@@ -14,16 +14,19 @@ A função deve retornar os resultados produzidos por esse programa CLIRC em uma
 
 **Solução - Parte I**
 
-Para transformar o dicionário de entrada em uma lista de tuplas, primeiramente lemos todas as variáveis passadas pelo dicionário, usando um parser para transformar o Clirc em código Clojure com a divisão de :input, :output e :workspace. Após a transformação, concatenamos todas as variáveis na respectiva ordem, tendo assim um vetor único.
+Para transformar o dicionário de entrada em uma lista de tuplas, primeiramente lemos todas as variáveis passadas pelo dicionário, usando um parser para transformar o Clirc em código Clojure com a divisão de `:input`, `:output` e `:workspace`. Após a transformação, concatenamos todas as variáveis na respectiva ordem, tendo assim um vetor único.
 
 Com esse vetor pronto, lemos de novo o programa em Clirc provido, procurando os índices das variáveis. Retornamos os índices encontrados na seguinte forma:
-```
-De: (set! temp (nand a b)) 
 
-Para: [indice(temp) indice(a) indice(b)]
-
+De:
+```clojure
+(set! temp (nand a b)) 
 ```
-Enfim, criamos uma lista com a contagem das variáveis tipo $:input$ e $:output$, seguida da lista de tuplas criadas anteriormente.
+Para: 
+```clojure
+[indice(temp) indice(a) indice(b)]
+```
+Enfim, criamos uma lista com a contagem das variáveis tipo `:input` e `:output`, seguida da lista de tuplas criadas anteriormente.
 
 
 **Execução**

@@ -41,6 +41,7 @@ Sabendo dessas características, criamos a função em Clojure que monta a funç
 Para obter o código CLIRC, execute:
 ```clojure
 #!=>lein repl
+;;Para visualizar o programa em CLIRC para multiplicação de números de 4 bits, execute:
 (println (f4r/mult-N-bits-clirc 4))
 
 ;;Para confirmar que a função gerada funciona como deveria, execute:
