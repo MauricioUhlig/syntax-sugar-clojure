@@ -21,7 +21,7 @@ Ao desenhar o circuito lógico que produzia a resposta para função GT, pudemos
 
 Provamos que essa constante existe com um gerador de código CLIRC-AON para a função GT_2n, onde só precisamos dizer qual o N para termos nosso programa em CLIRC pronto para ser "avaliado" pelo código core. O código gerado para GT_6 a ser avaliado pelo core é o seguinte:
 
-```
+```clojure
 [
  (set! temp1 (not (:in 5)))
  (set! temp2 (and (:in 2) temp1))
@@ -41,7 +41,7 @@ Provamos que essa constante existe com um gerador de código CLIRC-AON para a fu
 
 **Execução - I**
 Para executar a função (para obter o resultado da avaliação) no prompt do Clojure execute, siga este exemplo:
-```
+```clojure
 #!=> lein repl
 (ns clirc.core (:require [clirc.probl1.probl1 :as cmp]))
 (eval-prog-aon (cmp/cmp-n-bits-aon 3) [0 0 1 0 0 0])
@@ -58,7 +58,7 @@ avaliada.
 
 **Execução - II**
 Para testar a função que utiliza a constante no prompt do Clojure execute, use como exemplo:
-```
+```clojure
 #!=> lein repl
 (ns clirc.core (:require [clirc.probl1.probl1 :as cmp]))
 (eval-prog-aon (cmp/cmp-n-bits-aon 6) [0 0 1 0 0 1 0 0 0 1 0 0])
@@ -76,7 +76,7 @@ o primeiro
 
 **Execução - III**
 Para executar a função usando portas NAND no prompt do Clojure execute, por exemplo:
-```
+```clojure
 #!=> lein repl
 (ns clirc.core (:require [clirc.probl1.probl1 :as cmp]))
 (eval-prog-nand (cmp/cmp-n-bits-nand 3) [0 0 1 0 0 0])

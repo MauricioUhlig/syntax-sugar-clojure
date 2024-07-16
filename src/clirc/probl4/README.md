@@ -28,22 +28,18 @@ Enfim, criamos uma lista com a contagem das variáveis tipo $:input$ e $:output$
 
 **Execução**
 Para executar a função no prompt do Clojure execute, por exemplo:
-```
-lein repl
+```clojure
+#!=>lein repl
 
 (def code_clicr '[(set! temp0 (nand (:in 0) (:in 1)))
-(set! temp1 (nand temp0 temp0))
-(set! temp2 (nand (:in 2) temp1))
-(set! (:out 0) (nand temp2 temp1))
-(set! (:out 1) (nand temp0 temp1))
-])
-
+    (set! temp1 (nand temp0 temp0))
+    (set! temp2 (nand (:in 2) temp1))
+    (set! (:out 0) (nand temp2 temp1))
+    (set! (:out 1) (nand temp0 temp1))])
 
 (println (tuples/clirc2tuples code_clicr))
 
-
-O resultado esperado da execução ́e:
-
+;;O resultado esperado da execução ́e:
 [3 2 [[3 0 1] [4 3 3] [5 2 4] [6 5 4] [7 3 4]]]
 ```
 
@@ -61,16 +57,13 @@ Finalmente, calculamos o _offset_ para determinar a partir de qual _keyword_ enc
 
 **Execução**
 Para testar o programa, execute:
-```
-lein repl
+```clojure
+#!=>lein repl
 
 (def tuples '[3 2 [[3 0 1] [4 3 3] [5 2 4] [6 5 4] [7 3 4]]])
 
 (println (tuples/run-nand-tuples tuples [1 1 0]))
 
-O resultado esperado é:
-
+;;O resultado esperado é:
 [1 1]
-```
-
 ```

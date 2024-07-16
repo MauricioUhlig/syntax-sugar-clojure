@@ -15,7 +15,7 @@ Já a parte II pede uma prova que envolve uma função que tem o comportamento d
 Para produzir o programa $P'$ sem o açúcar sintático, dividimos em etapas o processamento.
 
 Primeiramente produzimos a AST do programa de entrada $P$, identificando as partes da estrutura (condição, then, else),
-renomeando as variáveis presentes de acordo com a "parte" que está localizada (ex.: variável a dentro do bloco then, vira a$then1).
+renomeando as variáveis presentes de acordo com a "parte" que está localizada (ex.: variável `a` dentro do bloco then, vira `a$then1`).
 
 Com as variáveis renomeadas, processamos então a AST de modo a construir a saída com o mesmo comportamento do IF, mas usando portas lógicas (em AON) que
 dão o resultado equivalente.
@@ -24,7 +24,7 @@ O resultado será a lista de entrada sem a estrutura IF, esta estará representa
 
 Exemplo:
 
-```
+```clojure
 Lista de entrada:
 
 [(set! a (and (:in 1) (:in 2)))
@@ -50,8 +50,8 @@ Lista de saída:
 
 **Execução**
 Para executar a função no prompt do Clojure execute, por exemplo:
-```
-lein repl
+```clojure
+#!=>lein repl
 
 (def if-code-example '[(if (:in 0) [(set! a (and (:in 1) (:in 2))) (set! b (or (:in 1) (:in 2)))] [(set! a (xor (:in 1) (:in 2)))(set! b (nand (:in 1) (:in 2)))])])
 

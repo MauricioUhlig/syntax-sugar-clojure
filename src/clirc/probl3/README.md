@@ -19,7 +19,8 @@ A lógica consiste em fixar o multiplicador e fixar o multiplicando, gerando ass
 
 **Execução**
 Para executar a multiplicação de $111 * 111$ (7*7), execute no prompt:
-```
+```clojure
+#!=>lein repl
 (ns clirc.core (:require [clirc.probl3.probl3 :as f4r]))
 (eval-prog-aon f4r/proc-code-3 [1 1 1 , 1 1 1])
 ```
@@ -37,13 +38,13 @@ Ao desenvolver a solução da I, pudemos notar padrões interessantes que nos aj
 Sabendo dessas características, criamos a função em Clojure que monta a função CLIRC-FOR para a multiplicação de $N$ bits.
 
 **Execução**
-```
 Para obter o código CLIRC, execute:
-lein repl
+```clojure
+#!=>lein repl
 (println (f4r/mult-N-bits-clirc 4))
 
-Para confirmar que a função gerada funciona como deveria, execute:
+;;Para confirmar que a função gerada funciona como deveria, execute:
 (eval-prog-aon (f4r/mult-N-bits-clirc 4) [0 0 0 1 1 0 0 0])
 
-Resultado esperado: [0 0 0 0 1 0 0 0]
+;;Resultado esperado: [0 0 0 0 1 0 0 0]
 ```
